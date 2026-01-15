@@ -11,7 +11,7 @@ Tienes 3 aplicaciones que necesitan diferentes configuraciones de red.
 ```bash
 
 # Crea una red llamada "frontend" con subnet 172.20.0.0/16
-docker network create --driver _____ --subnet _____ frontend
+docker network create --driver bridge --subnet 172.20.0.0/16 frontend
 
 # Verifica que se creó correctamente:
 docker network ls
@@ -38,7 +38,7 @@ docker run -d --name web3 --network host nginx
 # Pregunta: ¿Cuál container NO tiene su propia IP aislada?
 # A) web1
 # B) web2
-# C) web3
+# C) web3 <- no tiene ip aislada 
 # D) Todos tienen IP aislada
 
 ```
@@ -57,8 +57,13 @@ docker inspect web2 --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{
 docker inspect web3 --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
 
 # ¿Qué observas en web3?
+No hay ip valida
 # ¿Qué subnets tienen web1 y web2?
+web 1 
+172.17.0.2
 
+web 2
+172.17.0.2
 ```
 
 # 2.4 - Prueba la comunicación:
@@ -69,6 +74,10 @@ docker inspect web3 --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{
 docker exec web1 ping -c 2 web2
 
 # ¿Qué resultado esperas? ¿Por qué?
+Esperaba un error de conexion, pero obtuve un error de ejecución "ping", se soluciona ingresando al contenedor origen y actualizando e instalando los paquetes
+
+-> docker exec -it web1 sh
+-> apt update && apt install -y iputils-ping
 
 # Conecta web1 a la red frontend
 docker network connect frontend web1
@@ -77,6 +86,7 @@ docker network connect frontend web1
 docker exec web1 ping -c 2 web2
 
 # ¿Ahora funciona? ¿Por qué?
+ No pueden comunicarse inicialmente (redes diferentes); después de connect, sí pueden
 
 ```
 
