@@ -97,5 +97,6 @@ docker exec web1 ping -c 2 web2
 docker stop web1 web2 web3
 docker rm web1 web2 web3
 docker network rm frontend
+docker system prune -a (opcional)
 
 ```
